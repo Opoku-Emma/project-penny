@@ -25,4 +25,4 @@ def test_simulate_game():
 
 if __name__ == "__main__":
     # data = test_process_data()
-    test_convert_numpy_to_str()
+    test_simulate_game()

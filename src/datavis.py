@@ -7,7 +7,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def visualize_data(
+def datavis(
     wins: pd.DataFrame,
     ties: pd.DataFrame
 ) -> None:

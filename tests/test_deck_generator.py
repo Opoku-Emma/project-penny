@@ -1,4 +1,4 @@
-from src import generate_decks as generate_decks
+from src import datagen as generate_decks
 
 print('Making deck generator object')
 deck_obj = generate_decks.DeckGenerator()

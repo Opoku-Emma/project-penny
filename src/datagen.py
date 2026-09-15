@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.paths import PATH_DATA_RAW
+from src.paths import PATH_DATA_RAW_DECKS
 import src.generate_seed as g_seed
 
 
@@ -9,10 +9,11 @@ class DeckGenerator:
 
     def __init__(self) -> None:
         self.seed_logger = g_seed.SeedGenerator()
-        self.PATH_DECKS = PATH_DATA_RAW / "decks"
+        self.PATH_DECKS = PATH_DATA_RAW_DECKS
         self.current_seed = self.seed_logger.seed
         # this will be used to check if a deck has been
-        # generated. if they are the same, an error will pop up
+        # generated. if previous and current are the same,
+        # an error will pop up to first make a deck
         self.previous_seed = self.current_seed
 
     def make_decks(self, num_decks: int, num_cards: int) -> np.ndarray:
@@ -33,11 +34,11 @@ class DeckGenerator:
             raise RuntimeError("Generate decks before saving!")
 
         self.PATH_DECKS.mkdir(parents=True, exist_ok=True)
-        n_decks = self.current_decks.shape[0]
-        n_cards = self.current_decks.shape[1]
+        num_decks = self.current_decks.shape[0]
+        num_cards = self.current_decks.shape[1]
 
         filename = (
-            self.PATH_DECKS / f"decks_{n_decks}x{n_cards}_seed_{self.current_seed}"
+            self.PATH_DECKS / f"decks_{num_decks}x{num_cards}_seed_{self.current_seed}"
         )
         np.save(filename, self.current_decks)
         print()

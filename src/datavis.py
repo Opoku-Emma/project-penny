@@ -1,53 +1,79 @@
 # Data Visualization
-import src.paths as paths
 
-# Probably more complicated than it needs to be
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def datavis(
-    wins: pd.DataFrame,
-    ties: pd.DataFrame
-) -> None:
+import src.paths as paths
 
-    # Currently written to use passed dataframes.
-    # Will change to read in .csv files and convert to dataframes.
-  
-    # Currently uses the two dataframes that contain the wins and ties
-    # Needs to be modified to still use two dataframes, but
-    # the first one will contain the results of the classic game,
-    # the second one will contain the results of Ron's game
-    # It will also be changed to expect a tuple in each dataframe cell
-    # This tuple will contain the # of wines and the # of ties
+def datavis(input_file="datavis_test_input.csv"):
+    '''
+    Create the heatmap from .csv file containing the results from
+    the simulations that were run.
+    '''
 
-    # Current function
-    simulation_wins_df = wins
-    simulation_ties_df = ties
+    print(f"Using {paths.PATH_DATA_CLEAN} as folder for input .csv file")
+    print(f"Using {input_file} as the input .csv file")
+    print(f"Using {paths.PATH_FIGURES} as folder for heatmap file")
 
-    # Create a new dataframe, "labels", from simulation_wins_df
+    # Read in .csv file and build dataframe
+    results_df = pd.read_csv(
+        paths.PATH_DATA_CLEAN / input_file,
+        dtype=str
+    )
+
+    # Reformat the dataframe
+    results_df = results_df.set_index(results_df.columns[0])
+    results_df.index.name = None
+    print("Results dataframe from input file")
+    print(results_df)
+    
+    def extract_wins(cell):
+        '''
+        Extract the wins as numeric from the tuple in each cell of the 
+        results_df. The heatmap must have numeric values in each cell
+        of the input dataframe in order to determine the colors to 
+        be used.
+        '''
+        first, second = cell.strip("()").split(",")
+        wins = int(first)
+        return wins
+        
+    # Obtain the wins in numeric format
+    # using the extract_wins function
+    # Place in new dataframe simulation_wins_df
+    # this will be used by heatmap
+    simulation_wins_df = results_df.map(extract_wins)
+
+    # Create a new dataframe, "annotations_df", from results_df
     # It will be used by sns.heatmap() for what text 
     # to display inside each cell of the heatmap.
     # 
-    # convert the wins to string
-    # convert the ties to string
-    # place the ties in paren
+    # Convert the tuple in the cells found in results_df 
+    # that contains "(wins,ties)" to a string that has "wins(ties)"
+    # For example: (76,7) which is 76 wins and 7 ties
+    # would be reformat to 76(7) place the ties in paren
     # to each cell
-    
-    labels_df = (
-        simulation_wins_df.astype(str)
-        + "\n"
-        + "("
-        + simulation_ties_df.astype(str)
-        + ")"
-    )
-    print(labels_df)
-    
+    def reformat_cell(cell):
+        '''
+        Reformat the cells from the results which are in tuple format
+        "(wins,ties)" to "wins(ties)"
+        This is due to Ron's heatmap formatting reqs.
+        '''
+        first, second = cell.strip("()").split(",")
+        s = f"{first}\n({second})"
+        return s
+
+    annotations_df = results_df.map(reformat_cell)
+
+    print("After reformatting results for use in heatmap")
+    print(annotations_df)
+   
     # Blank the diagonal of the dataframe
     # to comply with Ron's requirement
-    for i in range(labels_df.shape[0]):
-        labels_df.iloc[i,i] = " "
+    for i in range(annotations_df.shape[0]):
+        annotations_df.iloc[i,i] = " "
 
     # Create a mask 
     # A mask is essentially a dataframe, that contains only True or False.
@@ -69,7 +95,7 @@ def datavis(
     for i in range(mask_df.shape[0]):
         mask_df.iloc[i,i] = True
 
-    print(mask_df)
+
     # Plot Heatmap
     plt.figure(figsize=(10, 10))
     
@@ -79,7 +105,7 @@ def datavis(
     #    - Numeric values used to determine the cell colors
     #    - Values used by the color bar (cbar=True)
     
-    # labels is yet another dataframe that provides the text 
+    # annotations_df is yet another dataframe that provides the text 
     # annotations to be displayed inside each cell.
     
     # Obtain a colormap
@@ -90,11 +116,11 @@ def datavis(
     
     # Create a heatmap
     # Use dataframe simulation_wins_df for the structure
-    # Use dataframe label_df for the contents of the cells in the heatmap
+    # Use dataframe annotations_df for the contents of the cells in the heatmap
     # Use colormap created 
     ax = sns.heatmap(
         simulation_wins_df,
-        annot=labels_df,
+        annot=annotations_df,
         mask=mask_df,
         fmt="",
         cmap=colormap,
@@ -156,9 +182,7 @@ def datavis(
     plt.tight_layout()
     
     # Save the plot as a PNG file
-    # Save it in the figures folder
-    # Possibly use the 
-    plt.savefig('figures/Pennys_Game.png')
+    plt.savefig(paths.PATH_FIGURES / 'Pennys_Game.png')
     
     plt.show()
 

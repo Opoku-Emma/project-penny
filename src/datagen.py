@@ -23,12 +23,16 @@ class DeckGenerator:
         self.current_seed = self.seed_logger.get_next_seed()
         rng = np.random.default_rng(self.current_seed)
 
-        self.current_decks = rng.integers(low=0, high=2, size=(num_decks, num_cards))
+        tmp_deck = [1] * (num_cards // 2) + [0] * (num_cards // 2)
+        tmp_deck = tmp_deck * num_decks
+        tmp_deck = np.array(tmp_deck).reshape((num_decks, num_cards))
+
+        self.current_decks = rng.permuted(tmp_deck, axis=1)
 
         return self.current_decks
 
     def save_deck(self) -> None:
-        '''Store simulated deck as numpy arrays for later retrieval'''
+        """Store simulated deck as numpy arrays for later retrieval"""
         if self.current_seed == self.previous_seed and (self.previous_seed != 0):
             # print("Generate decks before saving!")
             raise RuntimeError("Generate decks before saving!")

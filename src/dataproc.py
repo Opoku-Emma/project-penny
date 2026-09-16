@@ -73,16 +73,16 @@ def simulate_game(possible_combinations: list, card_combination: list) -> ...:
         dtype=object
     )
 
+    data = read_raw_data(PATH_DATA_RAW_DECKS)
+    converted_data = convert_numpy_str(data)
     for combo in possible_combinations:
-        data = read_raw_data(PATH_DATA_RAW_DECKS)
-        converted_data = convert_numpy_str(data)
         player1_overall, player2_overall, h_n_ties, ron_ties = play_game(
             converted_data, combo[0], combo[1]
         )
         print('Player1 overall', player1_overall)
 
         results_df.loc[combo[0], combo[1]] = (player1_overall[0],  h_n_ties)
-    results_df.to_csv(PATH_DATA_CLEAN/'processed_results.csv', sep=',')
+    results_df.to_csv(PATH_DATA_CLEAN/'datavis_test_input.csv', sep=',')
 
     return results_df
 

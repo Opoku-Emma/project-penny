@@ -1,7 +1,6 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from typing import Union
 
 from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
 
@@ -123,7 +122,6 @@ def play_game(data_stack: np.ndarray, player1, player2) -> tuple:
                 cards_won = len(simulation[: prev + 3])
                 player1_tmp_result[1] += cards_won
                 simulation = simulation[cards_won:]
-                # print(f"\tCards won {cards_won} | ", end="")
 
                 # reset counter
                 prev = 0
@@ -134,7 +132,6 @@ def play_game(data_stack: np.ndarray, player1, player2) -> tuple:
                 cards_won = len(simulation[: prev + 3])
                 player2_tmp_result[1] += cards_won
                 simulation = simulation[cards_won:]
-                # print(f"\tCards won {cards_won} | ", end="")
 
                 # reset counter
                 prev = 0

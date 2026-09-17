@@ -49,7 +49,7 @@ def convert_chr_to_nums(data_stack: np.ndarray) -> np.ndarray:
 
 
 def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
-    '''Generate possible pairs of player1 against player2'''
+    """Generate possible pairs of player1 against player2"""
     # possible_combinations = 2 ** num_cards_per_player
     card_combination = ["RRR", "RRB", "RBR", "BRR", "BBB", "BBR", "BRB", "RBB"]
     possible_combinations = []
@@ -63,45 +63,64 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
     return possible_combinations, card_combination
 
 
-def simulate_game(possible_combinations: list, card_combination: list) -> ...:
+def simulate_game(possible_combinations: list, card_combination: list) -> None:
+    """Simulate game and store scores to file as numpy arrays"""
     combo_size = len(card_combination)
-    results_df = pd.DataFrame(
-        np.zeros((combo_size, combo_size)),
-        columns=card_combination,
-        index=card_combination,
-        dtype=object
-    )
+
+    # lazily make a list of 4 dataframes
+    bulk_results = {
+        category: pd.DataFrame(
+            np.zeros((combo_size, combo_size)),
+            columns=card_combination,
+            index=card_combination,
+        )
+        for category in ["classic", "classic_ties", "ron", "ron_ties"]
+    }
 
     data = read_raw_data(PATH_DATA_RAW_DECKS)
     converted_data = convert_numpy_str(data)
+
+    # play game for every possible combination
     for combo in possible_combinations:
         player1_overall, player2_overall, h_n_ties, ron_ties = play_game(
             converted_data, combo[0], combo[1]
         )
-        print('Player1 overall', player1_overall)
 
-        results_df.loc[combo[0], combo[1]] = (player1_overall[0],  h_n_ties)
-    results_df.to_csv(PATH_DATA_CLEAN/'datavis_test_input.csv', sep=',')
+        # classic
+        bulk_results["classic"].loc[combo[0], combo[1]] = player1_overall[0]
+        # classic_ties
+        bulk_results["classic_ties"].loc[combo[0], combo[1]] = h_n_ties
+        # rons
+        bulk_results["ron"].loc[combo[0], combo[1]] = player1_overall[1]
+        # ron_ties
+        bulk_results["ron_ties"].loc[combo[0], combo[1]] = ron_ties
 
-    return results_df
+    # save each result to .np array
+    for key in bulk_results:
+        filename = PATH_DATA_CLEAN / f"_{key}"
+        np.save(filename, bulk_results[key].to_numpy())
+    # TODO: save column and index names to file as well
+    return
 
 
 # TODO: fix linting of arguments
-def play_game(data_stack: np.ndarray, player1, player2) -> tuple:
+def play_game(
+    data_stack: np.ndarray, player1: np.ndarray, player2: np.ndarray
+) -> tuple:
     """Simulate game by playing and counting wins, ties"""
 
     player1 = "".join(convert_chr_to_nums(player1))
     player2 = "".join(convert_chr_to_nums(player2))
 
-    # original, ron's version
+    # (0, 0) --> original, ron's version
     player1_overall = [0, 0]
     player2_overall = [0, 0]
     h_n_ties = 0
     ron_ties = 0
 
     # loop through each array
-    for i, simulation in enumerate(data_stack):
-        # print(f"-- Starting Simulation {i+1} --")
+    for _, simulation in enumerate(data_stack):
+
         simulation = "".join(simulation)
         # use prev for counting and shifting
         prev = 0
@@ -138,7 +157,6 @@ def play_game(data_stack: np.ndarray, player1, player2) -> tuple:
                 continue
 
             prev += 1
-            # print(f"\tRunning total: {prev}")
 
         if player1_tmp_result[0] == player2_tmp_result[0]:
             h_n_ties += 1

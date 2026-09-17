@@ -5,6 +5,7 @@ from tqdm import tqdm
 from datetime import datetime as dt
 
 from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
+import src.datagen as datagen
 
 
 def read_raw_data(data_path: Path) -> np.ndarray:
@@ -57,8 +58,17 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
     return possible_combinations, card_combination
 
 
-def simulate_game(possible_combinations: list, card_combination: list) -> None:
-    """Simulate game and store scores to file as numpy arrays"""
+def simulate_game(
+    possible_combinations: list, card_combination: list, additional_simulations: int = 0
+) -> None:
+    """Simulate game and store scores to file as numpy arrays
+    Args:
+        possible_combinations (list): a list of all possible player-vs-player
+            combinations
+        card_combinations (list): list of all possible 3-pair combinations of R & B
+        additional_simulations (int): generate additional deck of cards
+            if supplied by user
+    """
     combo_size = len(card_combination)
 
     # lazily make a list of 4 dataframes
@@ -71,7 +81,13 @@ def simulate_game(possible_combinations: list, card_combination: list) -> None:
         for category in ["classic", "classic_ties", "ron", "ron_ties"]
     }
 
+    if additional_simulations != 0:  # make more simulations
+        deck_gen = datagen.DeckGenerator()
+        deck_gen.make_decks(additional_simulations, 52)
+        deck_gen.save_deck()
+
     data = read_raw_data(PATH_DATA_RAW_DECKS)
+
     converted_data = convert_numpy_str(data)
 
     # play game for every possible combination
@@ -105,7 +121,18 @@ def simulate_game(possible_combinations: list, card_combination: list) -> None:
 def play_game(
     data_stack: np.ndarray, player1: np.ndarray, player2: np.ndarray
 ) -> tuple:
-    """Simulate game by playing and counting wins, ties"""
+    """Simulate game by playing and counting wins, ties
+    Args:
+        data_stack (np.ndarray): num_simulations x 52 shape data array
+        player1 (np.ndarray): 3-card sequence for player 1. this is just a one-
+            item array.
+        player2 (np.ndarray): 3-card sequence for player 1. this is just a one-
+            item array.
+    Returns:
+        np.ndarray: player1_overall [classic, ron's version],
+            player2_overall [classic, ron's version],
+            classic_ties, ron_ties
+    """
 
     player1 = "".join(convert_chr_to_nums(player1))
     player2 = "".join(convert_chr_to_nums(player2))

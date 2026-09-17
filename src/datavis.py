@@ -18,10 +18,7 @@ def datavis(N="TBD"):
     print(f"Using {paths.PATH_FIGURES} as folder for heatmap file")
 
     # Need this for row and column labels
-    color_patterns = [
-    "RRR", "RRB", "RBR", "RBB",
-    "BRR", "BRB", "BBR", "BBB"
-    ]
+    color_patterns = ["RRR", "RRB", "RBR", "BRR", "BBB", "BBR", "BRB", "RBB"]
 
     # Read in "Classic" Wins
     classic_wins_df = pd.DataFrame(

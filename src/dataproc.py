@@ -1,6 +1,8 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
+from datetime import datetime as dt
 
 from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
 
@@ -30,14 +32,6 @@ def read_raw_data(data_path: Path) -> np.ndarray:
 def convert_numpy_str(data_stack: np.ndarray) -> np.ndarray:
     """Convert data from integers to string type"""
     return data_stack.astype("str")
-
-
-# def convert_nums_to_chr(data_stack: np.ndarray) -> np.ndarray:
-#     '''Convert  '''
-#     tmp = data_stack.copy()
-#     nums_to_chr_dict = {"0": "R", "1": "B"}
-#     tmp = [nums_to_chr_dict[num] for num in tmp]
-#     return np.array(tmp)
 
 
 def convert_chr_to_nums(data_stack: np.ndarray) -> np.ndarray:
@@ -81,7 +75,12 @@ def simulate_game(possible_combinations: list, card_combination: list) -> None:
     converted_data = convert_numpy_str(data)
 
     # play game for every possible combination
-    for combo in possible_combinations:
+    pbar = tqdm(
+        possible_combinations,
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]",
+    )
+    for combo in pbar:
+        pbar.set_description(f"Playing {combo[0]} against {combo[1]}")
         player1_overall, player2_overall, h_n_ties, ron_ties = play_game(
             converted_data, combo[0], combo[1]
         )
@@ -103,7 +102,6 @@ def simulate_game(possible_combinations: list, card_combination: list) -> None:
     return
 
 
-# TODO: fix linting of arguments
 def play_game(
     data_stack: np.ndarray, player1: np.ndarray, player2: np.ndarray
 ) -> tuple:

@@ -8,8 +8,12 @@ from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
 import src.datagen as datagen
 
 
-def read_raw_data(data_path: Path) -> np.ndarray:
-
+def read_raw_data(data_path: Path) -> tuple:
+    """Get file paths for all numpy data in the data_path
+    Args:
+        data_path (Path): path to raw deck simulation numpy records
+    Returns:
+        tuple: list[numpy_paths], number of numpy files"""
     # list all .npy files in data_path
     data_paths = data_path.glob("*.npy")
 
@@ -17,6 +21,15 @@ def read_raw_data(data_path: Path) -> np.ndarray:
     # while keeping all the Path objects
     data_paths = list(data_paths)
     print(f"Found {len(data_paths)} data arrays")
+
+    return data_paths, len(data_paths)
+
+
+def concat_raw_data(data_paths: list[Path]) -> np.ndarray:
+    """Load data from the list of Paths provided. Concat into one big stack
+    Returns:
+        np.ndarray: numpy arrays from raw simulation stacked vertically"""
+
     data_stack = []
 
     for file_path in data_paths:
@@ -82,11 +95,12 @@ def simulate_game(
     }
 
     if additional_simulations != 0:  # make more simulations
+        print("Generating more data based on user input")
         deck_gen = datagen.DeckGenerator()
         deck_gen.make_decks(additional_simulations, 52)
         deck_gen.save_deck()
-
-    data = read_raw_data(PATH_DATA_RAW_DECKS)
+    data_paths, _ = read_raw_data(PATH_DATA_RAW_DECKS)
+    data = concat_raw_data(data_paths)
 
     converted_data = convert_numpy_str(data)
 

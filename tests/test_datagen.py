@@ -1,7 +1,7 @@
 from src import datagen as generate_decks
 
 
-def test_datagen(generate_data: bool = True, num_simulations: int =10):
+def test_datagen(generate_data: bool = False, num_simulations: int =10):
 
     if generate_data:
         print('Making deck generator object')

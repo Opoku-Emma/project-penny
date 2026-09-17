@@ -5,10 +5,15 @@ from tqdm import tqdm
 from datetime import datetime as dt
 
 from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
+import src.datagen as datagen
 
 
-def read_raw_data(data_path: Path) -> np.ndarray:
-
+def read_raw_data(data_path: Path) -> tuple:
+    """Get file paths for all numpy data in the data_path
+    Args:
+        data_path (Path): path to raw deck simulation numpy records
+    Returns:
+        tuple: list[numpy_paths], number of numpy files"""
     # list all .npy files in data_path
     data_paths = data_path.glob("*.npy")
 
@@ -16,6 +21,15 @@ def read_raw_data(data_path: Path) -> np.ndarray:
     # while keeping all the Path objects
     data_paths = list(data_paths)
     print(f"Found {len(data_paths)} data arrays")
+
+    return data_paths, len(data_paths)
+
+
+def concat_raw_data(data_paths: list[Path]) -> np.ndarray:
+    """Load data from the list of Paths provided. Concat into one big stack
+    Returns:
+        np.ndarray: numpy arrays from raw simulation stacked vertically"""
+
     data_stack = []
 
     for file_path in data_paths:
@@ -57,8 +71,17 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
     return possible_combinations, card_combination
 
 
-def simulate_game(possible_combinations: list, card_combination: list) -> None:
-    """Simulate game and store scores to file as numpy arrays"""
+def simulate_game(
+    possible_combinations: list, card_combination: list, additional_simulations: int = 0
+) -> None:
+    """Simulate game and store scores to file as numpy arrays
+    Args:
+        possible_combinations (list): a list of all possible player-vs-player
+            combinations
+        card_combinations (list): list of all possible 3-pair combinations of R & B
+        additional_simulations (int): generate additional deck of cards
+            if supplied by user
+    """
     combo_size = len(card_combination)
 
     # lazily make a list of 4 dataframes
@@ -71,7 +94,14 @@ def simulate_game(possible_combinations: list, card_combination: list) -> None:
         for category in ["classic", "classic_ties", "ron", "ron_ties"]
     }
 
-    data = read_raw_data(PATH_DATA_RAW_DECKS)
+    if additional_simulations != 0:  # make more simulations
+        print("Generating more data based on user input")
+        deck_gen = datagen.DeckGenerator()
+        deck_gen.make_decks(additional_simulations, 52)
+        deck_gen.save_deck()
+    data_paths, _ = read_raw_data(PATH_DATA_RAW_DECKS)
+    data = concat_raw_data(data_paths)
+
     converted_data = convert_numpy_str(data)
 
     # play game for every possible combination
@@ -105,7 +135,18 @@ def simulate_game(possible_combinations: list, card_combination: list) -> None:
 def play_game(
     data_stack: np.ndarray, player1: np.ndarray, player2: np.ndarray
 ) -> tuple:
-    """Simulate game by playing and counting wins, ties"""
+    """Simulate game by playing and counting wins, ties
+    Args:
+        data_stack (np.ndarray): num_simulations x 52 shape data array
+        player1 (np.ndarray): 3-card sequence for player 1. this is just a one-
+            item array.
+        player2 (np.ndarray): 3-card sequence for player 1. this is just a one-
+            item array.
+    Returns:
+        np.ndarray: player1_overall [classic, ron's version],
+            player2_overall [classic, ron's version],
+            classic_ties, ron_ties
+    """
 
     player1 = "".join(convert_chr_to_nums(player1))
     player2 = "".join(convert_chr_to_nums(player2))

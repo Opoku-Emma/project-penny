@@ -23,7 +23,7 @@ def datavis(N="TBD"):
     print(f"Using {paths.PATH_FIGURES} as folder for images")
     print(f"Using {paths.PATH_FIGURES_ARCHIVE} as folder for archived images")
 
-   # Need this for row and column labels
+    # Need this for row and column labels
     color_patterns = np.load(paths.PATH_DATA_CLEAN / "possible_pairs.npy")
     print(f"Using color patterns {color_patterns}")
 

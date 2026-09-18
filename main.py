@@ -5,7 +5,7 @@ import src.datavis as datavis
 # We can either use argparse or just take user
 # input on the fly
 def main():
-    additional_simulation = 0
+    additional_simulation = 1
     print("Hello from project-penny!\n")
 
     if additional_simulation != 0:

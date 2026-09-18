@@ -1,5 +1,6 @@
 from src.dataproc import make_player_pairs, simulate_game
 import src.datavis as datavis
+from datetime import datetime as dt
 
 
 # We can either use argparse or just take user

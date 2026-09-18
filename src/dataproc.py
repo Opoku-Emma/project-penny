@@ -68,7 +68,7 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
 
 
 def calculate_probabilities(score: int, total_simulations: int) -> int:
-    return round((score / total_simulations) * 100)
+    return round((score / total_simulations) * 100, 1)
 
 
 def update_scores(results_dict: dict, combo: list, player_overall:list, total_simulations: int, ron_ties: int, classic_ties: int) -> dict:
@@ -141,7 +141,7 @@ def simulate_game(
         bulk_results = update_scores(bulk_results, combo, player1_overall, total_simulations, ron_ties, h_n_ties)
 
          # player_b's perspective 
-        bulk_results = update_scores(bulk_results, combo, player2_overall, total_simulations, ron_ties, h_n_ties)
+        bulk_results = update_scores(bulk_results, combo[::-1], player2_overall, total_simulations, ron_ties, h_n_ties)
 
     # save each result to .np array
     for key in bulk_results:

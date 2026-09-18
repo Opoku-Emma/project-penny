@@ -5,6 +5,11 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
+from datetime import datetime
+import time
+
+import os
+import shutil
 
 import src.paths as paths
 
@@ -13,9 +18,10 @@ def datavis(N="TBD"):
     Create the heatmaps from .npy files containing the results from
     the classics that were run.
     '''
-
+    print()
     print(f"Using {paths.PATH_DATA_CLEAN} as folder for input .npy files")
-    print(f"Using {paths.PATH_FIGURES} as folder for heatmap file")
+    print(f"Using {paths.PATH_FIGURES} as folder for images")
+    print(f"Using {paths.PATH_FIGURES_ARCHIVE} as folder for archived images")
 
     # Need this for row and column labels
     color_patterns = ["RRR", "RRB", "RBR", "BRR", "BBB", "BBR", "BRB", "RBB"]
@@ -130,8 +136,13 @@ def datavis(N="TBD"):
         ax=axes[0]
     )
     
-    # Add a title 
-    title_string = 'My Probability of Win(Tie)' + '\n' + 'Classic Scoring by [Tricks]' + '\n' + 'N='
+
+    # Add a title
+    title_string = (
+        "My Probability of Win(Tie)\n"
+        "Classic Scoring by [Tricks]\n"
+        f"N={N}"
+    )
     axes[0].set_title(title_string)
     
     # Label for columns
@@ -208,12 +219,35 @@ def datavis(N="TBD"):
         left=True,
         labelbottom=True,
         labeltop=False)
-
     
     plt.tight_layout()
+
+    # List all files currently in figures
+    # There should be just one
+    allfiles = os.listdir(paths.PATH_FIGURES)
     
-    # Save the plot as a PNG file
-    plt.savefig(paths.PATH_FIGURES / 'Pennys_Game.png')
+    # Iterate thru files to move them to destination folder
+    for f in allfiles:
+        src_path = os.path.join(paths.PATH_FIGURES, f)
+        # If its a file move it
+        if os.path.isfile(src_path):
+            dst_path = os.path.join(paths.PATH_FIGURES_ARCHIVE, f)
+            shutil.move(src_path, dst_path)
+        
+    # Get current date and time
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    
+    # Convert datetime obj to string
+    str_current_datetime = str(current_datetime)
+    # Remove "-" and replace " "
+    str_current_datetime = str_current_datetime .replace("-", "").replace(" ", "_")
+    
+    # create a file object along with extension
+    image_name = "Pennys_Game_" + str_current_datetime + ".png"
+    print(f"Saving heatmap image {image_name}")
+    
+    # Save the heatmap as a PNG file
+    plt.savefig(paths.PATH_FIGURES / image_name)
     
     plt.show()
 

@@ -138,10 +138,10 @@ def simulate_game(
         )
 
         # update player a's results
-        update_scores(bulk_results, combo, player1_overall, total_simulations, ron_ties, h_n_ties)
+        bulk_results = update_scores(bulk_results, combo, player1_overall, total_simulations, ron_ties, h_n_ties)
 
          # player_b's perspective 
-        update_scores(bulk_results, combo, player2_overall, total_simulations, ron_ties, h_n_ties)
+        bulk_results = update_scores(bulk_results, combo, player2_overall, total_simulations, ron_ties, h_n_ties)
 
     # save each result to .np array
     for key in bulk_results:

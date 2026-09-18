@@ -124,6 +124,9 @@ def simulate_game(
     data = concat_raw_data(data_paths)
     total_simulations = data.shape[0]
 
+    # save total simulations to file
+    np.save(PATH_DATA_CLEAN / 'total_sims.npy', total_simulations)
+
     converted_data = convert_numpy_str(data)
 
     # play game for every possible combination
@@ -147,7 +150,7 @@ def simulate_game(
     for key in bulk_results:
         filename = PATH_DATA_CLEAN / f"_{key}"
         np.save(filename, bulk_results[key].to_numpy())
-    return
+    return total_simulations
 
 
 def play_game(

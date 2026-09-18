@@ -2,8 +2,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from datetime import datetime as dt
-
+from itertools import product, combinations
 from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
 import src.datagen as datagen
 
@@ -58,21 +57,22 @@ def convert_chr_to_nums(data_stack: np.ndarray) -> np.ndarray:
 
 def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
     """Generate possible pairs of player1 against player2"""
-    # possible_combinations = 2 ** num_cards_per_player
-    card_combination = ["RRR", "RRB", "RBR", "BRR", "BBB", "BBR", "BRB", "RBB"]
-    possible_combinations = []
 
     # construct a pairing, while excluding duplicates
-    for i, row in enumerate(card_combination):
-        for j, col in enumerate(card_combination):
-            if i != j:
-                possible_combinations.append(np.array((row, col)))
-
+    card_combination = ["".join(p) for p in product("RB", repeat=num_cards_per_player)]
+    possible_combinations = list(combinations(card_combination, 2))
+    # save for later use by visualization
+    possible_combinations = np.array(possible_combinations)
+    np.save(PATH_DATA_CLEAN / 'possible_pairs', possible_combinations)
     return possible_combinations, card_combination
 
 
+def calculate_probabilities(score: int, total_simulations: int) -> int:
+    return round((score / total_simulations) * 100)
+
+
 def simulate_game(
-    possible_combinations: list, card_combination: list, additional_simulations: int = 0
+    possible_combinations: np.ndarray, card_combination: list, additional_simulations: int = 0
 ) -> None:
     """Simulate game and store scores to file as numpy arrays
     Args:
@@ -101,6 +101,7 @@ def simulate_game(
         deck_gen.save_deck()
     data_paths, _ = read_raw_data(PATH_DATA_RAW_DECKS)
     data = concat_raw_data(data_paths)
+    total_simulations = data.shape[0]
 
     converted_data = convert_numpy_str(data)
 
@@ -115,14 +116,16 @@ def simulate_game(
             converted_data, combo[0], combo[1]
         )
 
-        # classic
-        bulk_results["classic"].loc[combo[0], combo[1]] = player1_overall[0]
-        # classic_ties
-        bulk_results["classic_ties"].loc[combo[0], combo[1]] = h_n_ties
-        # rons
-        bulk_results["ron"].loc[combo[0], combo[1]] = player1_overall[1]
-        # ron_ties
-        bulk_results["ron_ties"].loc[combo[0], combo[1]] = ron_ties
+        bulk_results["classic"].loc[combo[0], combo[1]] = calculate_probabilities(player1_overall[0], total_simulations)
+        bulk_results["classic_ties"].loc[combo[0], combo[1]] = calculate_probabilities(h_n_ties, total_simulations)
+        bulk_results["ron"].loc[combo[0], combo[1]] = calculate_probabilities(player1_overall[1], total_simulations)
+        bulk_results["ron_ties"].loc[combo[0], combo[1]] = calculate_probabilities(ron_ties, total_simulations)
+
+         # player_b's perspective 
+        bulk_results["classic"].loc[combo[1], combo[0]] = calculate_probabilities(player2_overall[0], total_simulations)
+        bulk_results["ron"].loc[combo[1], combo[0]] = calculate_probabilities(player2_overall[1], total_simulations)
+        bulk_results["classic_ties"].loc[combo[1], combo[0]] = calculate_probabilities(h_n_ties, total_simulations)
+        bulk_results["ron_ties"].loc[combo[1], combo[0]] = calculate_probabilities(ron_ties, total_simulations)
 
     # save each result to .np array
     for key in bulk_results:

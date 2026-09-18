@@ -23,8 +23,8 @@ def datavis(N="TBD"):
     print(f"Using {paths.PATH_FIGURES} as folder for images")
     print(f"Using {paths.PATH_FIGURES_ARCHIVE} as folder for archived images")
 
-    # Need this for row and column labels
-    color_patterns = ["RRR", "RRB", "RBR", "BRR", "BBB", "BBR", "BRB", "RBB"]
+   # Need this for row and column labels
+    color_patterns = np.load(paths.PATH_DATA_CLEAN / "possible_
 
     # Read in "Classic" Wins
     classic_wins_df = pd.DataFrame(

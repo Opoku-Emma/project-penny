@@ -24,7 +24,7 @@ def datavis(N="TBD"):
     print(f"Using {paths.PATH_FIGURES_ARCHIVE} as folder for archived images")
 
    # Need this for row and column labels
-    color_patterns = np.load(paths.PATH_DATA_CLEAN / "possible_
+    color_patterns = np.load(paths.PATH_DATA_CLEAN / "possible_pairs.npy"
 
     # Read in "Classic" Wins
     classic_wins_df = pd.DataFrame(

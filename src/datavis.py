@@ -195,8 +195,11 @@ def datavis(N="TBD"):
         cbar=False,
         ax=axes[1]
     )
-
-    title_string = 'My Probability of Win(Tie)' + '\n' + "Ron's Scoring by [Cards]" + '\n' + 'N='
+    title_string = (
+        "My Probability of Win(Tie)\n"
+        "Ron's Scoring by [Cards]\n"
+        f"N={N}"
+    )
     
     axes[1].set_title(title_string)
     

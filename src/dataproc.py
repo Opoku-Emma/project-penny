@@ -111,6 +111,7 @@ def simulate_game(
             np.zeros((combo_size, combo_size)),
             columns=card_combination,
             index=card_combination,
+            dtype=int
         )
         for category in ["classic", "classic_ties", "ron", "ron_ties"]
     }

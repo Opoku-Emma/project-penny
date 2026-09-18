@@ -71,6 +71,27 @@ def calculate_probabilities(score: int, total_simulations: int) -> int:
     return round((score / total_simulations) * 100)
 
 
+def update_scores(results_dict: dict, combo: list, player_overall:list, total_simulations: int, ron_ties: int, classic_ties: int) -> dict:
+    """Update scores after each sequence-by-sequence total simulation
+
+    Args:
+        results_dict (dict): this will be written to file for heatmaps
+        combo (list): player-vs-player sequence combinations
+        player_overall (list): (classic wins, rons wins)
+        total_simulations (int): total simulations 
+        ron_ties (int): ties scored using ron's versioin
+        classic_ties (int): ties scored using classic version
+
+    Returns:
+        dict: final output
+    """
+    results_dict["classic"].loc[combo[0], combo[1]] = calculate_probabilities(player_overall[0], total_simulations)
+    results_dict["classic_ties"].loc[combo[0], combo[1]] = calculate_probabilities(classic_ties, total_simulations)
+    results_dict["ron"].loc[combo[0], combo[1]] = calculate_probabilities(player_overall[1], total_simulations)
+    results_dict["ron_ties"].loc[combo[0], combo[1]] = calculate_probabilities(ron_ties, total_simulations)
+    return results_dict
+
+
 def simulate_game(
     possible_combinations: np.ndarray, card_combination: list, additional_simulations: int = 0
 ) -> None:
@@ -116,22 +137,16 @@ def simulate_game(
             converted_data, combo[0], combo[1]
         )
 
-        bulk_results["classic"].loc[combo[0], combo[1]] = calculate_probabilities(player1_overall[0], total_simulations)
-        bulk_results["classic_ties"].loc[combo[0], combo[1]] = calculate_probabilities(h_n_ties, total_simulations)
-        bulk_results["ron"].loc[combo[0], combo[1]] = calculate_probabilities(player1_overall[1], total_simulations)
-        bulk_results["ron_ties"].loc[combo[0], combo[1]] = calculate_probabilities(ron_ties, total_simulations)
+        # update player a's results
+        update_scores(bulk_results, combo, player1_overall, total_simulations, ron_ties, h_n_ties)
 
          # player_b's perspective 
-        bulk_results["classic"].loc[combo[1], combo[0]] = calculate_probabilities(player2_overall[0], total_simulations)
-        bulk_results["ron"].loc[combo[1], combo[0]] = calculate_probabilities(player2_overall[1], total_simulations)
-        bulk_results["classic_ties"].loc[combo[1], combo[0]] = calculate_probabilities(h_n_ties, total_simulations)
-        bulk_results["ron_ties"].loc[combo[1], combo[0]] = calculate_probabilities(ron_ties, total_simulations)
+        update_scores(bulk_results, combo, player2_overall, total_simulations, ron_ties, h_n_ties)
 
     # save each result to .np array
     for key in bulk_results:
         filename = PATH_DATA_CLEAN / f"_{key}"
         np.save(filename, bulk_results[key].to_numpy())
-    # TODO: save column and index names to file as well
     return
 
 
@@ -214,11 +229,4 @@ def play_game(
         else:
             player2_overall[1] += 1
 
-    # print(
-    #     f"End of {len(data_stack)} simulations.\n"
-    #     f"Humble-N Results: Player1 {player1_overall[0]} | "
-    #     f"Player2 {player2_overall[0]} | Ties {h_n_ties}\n"
-    #     f"Ron's Results:    Player1 {player1_overall[1]} | "
-    #     f"Player2 {player2_overall[1]} | Ties {ron_ties}"
-    # )
     return player1_overall, player2_overall, h_n_ties, ron_ties

@@ -27,6 +27,10 @@ def datavis(N="TBD"):
     color_patterns = np.load(paths.PATH_DATA_CLEAN / "possible_pairs.npy")
     print(f"Using color patterns {color_patterns}")
 
+    total_sims = np.load(paths.PATH_DATA_CLEAN / "total_sims.npy")
+    print(f"Using total simulations {total_sims}")
+    N = total_sims
+
     # Read in "Classic" Wins
     classic_wins_df = pd.DataFrame(
         np.load(paths.PATH_DATA_CLEAN / "_classic.npy"),

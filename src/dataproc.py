@@ -63,7 +63,7 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
     possible_combinations = list(combinations(card_combination, 2))
     # save for later use by visualization
     possible_combinations = np.array(possible_combinations)
-    np.save(PATH_DATA_CLEAN / 'possible_pairs', possible_combinations)
+    np.save(PATH_DATA_CLEAN / 'possible_pairs', card_combination)
     return possible_combinations, card_combination
 
 
@@ -141,7 +141,7 @@ def simulate_game(
         bulk_results = update_scores(bulk_results, combo, player1_overall, total_simulations, ron_ties, h_n_ties)
 
          # player_b's perspective 
-        bulk_results = update_scores(bulk_results, combo, player2_overall, total_simulations, ron_ties, h_n_ties)
+        bulk_results = update_scores(bulk_results, combo[::-1], player2_overall, total_simulations, ron_ties, h_n_ties)
 
     # save each result to .np array
     for key in bulk_results:

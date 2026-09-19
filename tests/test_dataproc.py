@@ -1,5 +1,6 @@
-from src.dataproc import make_player_pairs, simulate_game, read_raw_data
+from src.dataproc import make_player_pairs, read_raw_data, simulate_game
 from src.paths import PATH_DATA_RAW_DECKS
+
 
 def test_simulate_game():
     print("Checking if data exists")
@@ -12,7 +13,6 @@ def test_simulate_game():
     possible_combinations, card_combination = make_player_pairs(3)
     simulate_game(possible_combinations, card_combination)
 
-    return
 
 
 if __name__ == "__main__":

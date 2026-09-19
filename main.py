@@ -1,5 +1,5 @@
+from src import datavis
 from src.dataproc import make_player_pairs, simulate_game
-import src.datavis as datavis
 
 
 # We can either use argparse or just take user
@@ -19,7 +19,6 @@ def main():
     datavis.datavis()
     print("Done")
 
-    return
 
 
 if __name__ == "__main__":

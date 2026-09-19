@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.paths import PATH_DATA_RAW_DECKS
 import src.generate_seed as g_seed
+from src.paths import PATH_DATA_RAW_DECKS
 
 
 class DeckGenerator:
@@ -47,4 +47,3 @@ class DeckGenerator:
         np.save(filename, self.current_decks)
         print()
         self.seed_logger.save_seed_info()
-        return

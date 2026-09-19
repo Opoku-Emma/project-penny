@@ -1,11 +1,8 @@
-import numpy as np
 import json
 from datetime import datetime as dt
-from pathlib import Path
 
 from src.paths import (
     PATH_LOGS,
-    make_project_folders,
 )
 
 SEED_PATH = PATH_LOGS / "seed_log.json"
@@ -37,7 +34,6 @@ class SeedGenerator:
         seed_log = {"seed": self.seed, "seed_time": str(dt.now()), "used": True}
         with SEED_PATH.open("w") as outFile:
             json.dump(seed_log, outFile)
-        return
 
 
 # def main():

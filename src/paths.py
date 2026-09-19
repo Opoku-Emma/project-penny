@@ -22,4 +22,3 @@ def make_project_folders():
     PATH_LOGS.mkdir(parents=True, exist_ok=True)
     PATH_FIGURES.mkdir(parents=True, exist_ok=True)
     PATH_FIGURES_ARCHIVE.mkdir(parents=True, exist_ok=True)
-    return None

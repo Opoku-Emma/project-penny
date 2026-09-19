@@ -1,10 +1,12 @@
+from itertools import combinations, product
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from itertools import product, combinations
-from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
-import src.datagen as datagen
+
+from src import datagen
+from src.paths import PATH_DATA_CLEAN, PATH_DATA_RAW_DECKS
 
 
 def read_raw_data(data_path: Path) -> tuple:
@@ -147,7 +149,6 @@ def simulate_game(
     for key in bulk_results:
         filename = PATH_DATA_CLEAN / f"_{key}"
         np.save(filename, bulk_results[key].to_numpy())
-    return
 
 
 def play_game(

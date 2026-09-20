@@ -2,6 +2,11 @@
 
 ## Introduction
 
+DATA 440 - Automation & Workflow
+
+- Emmanuel Opoku
+- Mark Serena
+
 This project simulates and visualizes results from two versions of the Humble-Nishiyama (H-N) Randomness Game, a variation of Penney's Game that uses a standard 52-card deck of playing cards.
 
 ## Penney's Game
@@ -32,9 +37,38 @@ Given each possible opponent choice, which sequence provides the strongest respo
 
 ## Running the Simulation
 
+The program is organized as a data-processing pipeline. `main.py` serves as
+the entry point and coordinates the generation of simulated decks, processing
+of the game results, and creation of the heatmap visualizations.
+
+The primary source files are located in the `src` directory. Simulation data
+are stored under `data`, and generated visualizations are stored in `figures`.
+Previous versions of the visualizations are retained in `figures/archive`.
+
+To run the program from the root directory of the repository enter the command: 
+python main.py
+
+When the program starts, the user is prompted to choose whether to start a
+new simulation, add additional simulated decks to the existing data, or use
+the existing simulation data.
+
+Each simulation consists of a uniquely randomized shuffle of a standard 52-card deck. 
+For each shuffled deck, every possible pairing of the eight three-card color 
+patterns is played against the same deck. Using the same set of shuffled 
+decks for all pattern pairings allows the results of the different strategies 
+to be compared under identical simulated conditions.
+
+If starting a new simulation or adding to an existing simulation, the user
+will also be prompted for the number of decks to generate. The simulation
+results are processed and heatmaps for both scoring methods are generated
+automatically.
+
 ## Results
 
-Results are presented as heatmaps, one for each variation of the game. The value in each cell represents the percentage of games won by "My Choice" against the corresponding "Opponent Choice." The value in parentheses represents the percentage of games that resulted in a tie.
+Results are presented as heatmaps, one for each variation of the game. 
+The value in each cell represents the percentage of games won by "My Choice" 
+against the corresponding "Opponent Choice." The value in parentheses represents 
+the percentage of games that resulted in a tie.
 
 ![Penney's Game Results](figures/Pennys_Game.png)
 

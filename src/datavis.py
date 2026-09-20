@@ -13,10 +13,14 @@ import shutil
 
 import src.paths as paths
 
-def datavis(N="TBD"):
+def datavis() -> None:
     '''
-    Create the heatmaps from .npy files containing the results from
-    the classics that were run.
+    Create the heatmaps from the simulation results
+    Read 4 .npy files for results: 
+    - classic wins and ties, 
+    - ron's wins and ties
+    Read .npy files for color patterns and number of simulations
+    Save new heatmaps in figures folder, and archive any previous versions
     '''
     print()
     print(f"Using {paths.PATH_DATA_CLEAN} as folder for input .npy files")

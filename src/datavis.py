@@ -144,7 +144,7 @@ def datavis(N="TBD"):
 
     # Add a title
     title_string = (
-        "My Probability of Win(Tie)\n"
+        "My Probability of Win (Tie)\n"
         "Classic Scoring by [Tricks]\n"
         f"N={N}"
     )
@@ -201,7 +201,7 @@ def datavis(N="TBD"):
         ax=axes[1]
     )
     title_string = (
-        "My Probability of Win(Tie)\n"
+        "My Probability of Win (Tie)\n"
         "Ron's Scoring by [Cards]\n"
         f"N={N}"
     )
@@ -230,33 +230,25 @@ def datavis(N="TBD"):
     
     plt.tight_layout()
 
-    # List all files currently in figures
-    # There should be just one
-    allfiles = os.listdir(paths.PATH_FIGURES)
-    
-    # Iterate thru files to move them to destination folder
-    for f in allfiles:
-        src_path = os.path.join(paths.PATH_FIGURES, f)
-        # If its a file move it
-        if os.path.isfile(src_path):
-            dst_path = os.path.join(paths.PATH_FIGURES_ARCHIVE, f)
-            shutil.move(src_path, dst_path)
-        
-    # Get current date and time
-    current_datetime = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
-    
-    # Convert datetime obj to string
-    str_current_datetime = str(current_datetime)
-    # Remove "-" and replace " "
-    str_current_datetime = str_current_datetime .replace("-", "").replace(" ", "_")
-    
-    # create a file object along with extension
-    image_name = "Pennys_Game_" + str_current_datetime + ".png"
+    # Get current date and time for archiving the old figure
+    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Current heatmap always has the same filename
+    image_name = "Pennys_Game.png"
+    current_image = paths.PATH_FIGURES / image_name
+
+    # If a current heatmap already exists, move it to the archive
+    # and add the date/time to its filename.
+    if current_image.exists():
+        archive_name = f"Pennys_Game_{current_datetime}.png"
+        archive_path = paths.PATH_FIGURES_ARCHIVE / archive_name
+
+        shutil.move(current_image, archive_path)
+
+    # Save the new heatmap using the standard filename
     print(f"Saving heatmap image {image_name}")
-    
-    # Save the heatmap as a PNG file
-    plt.savefig(paths.PATH_FIGURES / image_name)
-    
+    plt.savefig(current_image)
+
     plt.show()
 
     return

@@ -3,21 +3,49 @@ import src.datavis as datavis
 from datetime import datetime as dt
 
 
-# We can either use argparse or just take user
-# input on the fly
 def main():
-    additional_simulation = 1
+
+    # Number of new shuffled decks to generate.
+    additional_simulation = 10_000_000
+
     print("Hello from project-penny!\n")
 
     if additional_simulation != 0:
-        print("Simulating data")
+
+        print(f"Simulating {additional_simulation:,} decks")
+
+        # Record the time immediately before starting the simulation.
+        start_time = dt.now()
+        print(f"Start time: {start_time:%Y-%m-%d %H:%M:%S}\n")
+
+        # Generate all possible player-vs-player color combinations.
         possible_combinations, card_combination = make_player_pairs(3)
-        simulate_game(possible_combinations, card_combination)
+
+        # Generate the requested number of additional decks and
+        # simulate every player combination against the decks.
+        simulate_game(
+            possible_combinations,
+            card_combination,
+            additional_simulation
+        )
+
+        # Stop the simulation timer before generating/displaying figures.
+        end_time = dt.now()
+        elapsed_time = end_time - start_time
+
+        print("\nSimulation completed")
+        print(f"End time:     {end_time:%Y-%m-%d %H:%M:%S}")
+        print(f"Runtime:      {elapsed_time}")
+
     else:
         print("No additional data specified! Using old data")
 
-    print("Generating Charts")
+    # Figure generation occurs after simulation timing is complete.
+    # plt.show() may block execution until the figure window is closed,
+    # but this will no longer affect the reported simulation runtime.
+    print("\nGenerating Charts")
     datavis.datavis()
+
     print("Done")
 
     return

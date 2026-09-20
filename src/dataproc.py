@@ -65,7 +65,7 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
     possible_combinations = list(combinations(card_combination, 2))
     # save for later use by visualization
     possible_combinations = np.array(possible_combinations)
-    np.save(PATH_DATA_CLEAN / 'possible_pairs', possible_combinations)
+    np.save(PATH_DATA_CLEAN / 'possible_pairs', card_combination)
     return possible_combinations, card_combination
 
 
@@ -113,6 +113,7 @@ def simulate_game(
             np.zeros((combo_size, combo_size)),
             columns=card_combination,
             index=card_combination,
+            dtype=int
         )
         for category in ["classic", "classic_ties", "ron", "ron_ties"]
     }
@@ -125,6 +126,9 @@ def simulate_game(
     data_paths, _ = read_raw_data(PATH_DATA_RAW_DECKS)
     data = concat_raw_data(data_paths)
     total_simulations = data.shape[0]
+
+    # save total simulations to file
+    np.save(PATH_DATA_CLEAN / 'total_sims.npy', total_simulations)
 
     converted_data = convert_numpy_str(data)
 
@@ -149,6 +153,7 @@ def simulate_game(
     for key in bulk_results:
         filename = PATH_DATA_CLEAN / f"_{key}"
         np.save(filename, bulk_results[key].to_numpy())
+    return total_simulations
 
 
 def play_game(

@@ -1,10 +1,12 @@
+from itertools import combinations, product
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from itertools import product, combinations
-from src.paths import PATH_DATA_RAW_DECKS, PATH_DATA_CLEAN
-import src.datagen as datagen
+
+from src import datagen
+from src.paths import PATH_DATA_CLEAN, PATH_DATA_RAW_DECKS
 
 
 def read_raw_data(data_path: Path) -> tuple:
@@ -68,7 +70,7 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
 
 
 def calculate_probabilities(score: int, total_simulations: int) -> int:
-    return round((score / total_simulations) * 100)
+    return round((score / total_simulations) * 100, None)
 
 
 def update_scores(results_dict: dict, combo: list, player_overall:list, total_simulations: int, ron_ties: int, classic_ties: int) -> dict:
@@ -124,6 +126,7 @@ def simulate_game(
     data_paths, _ = read_raw_data(PATH_DATA_RAW_DECKS)
     data = concat_raw_data(data_paths)
     total_simulations = data.shape[0]
+    print(total_simulations)
 
     # save total simulations to file
     np.save(PATH_DATA_CLEAN / 'total_sims.npy', total_simulations)

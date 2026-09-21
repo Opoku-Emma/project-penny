@@ -46,7 +46,7 @@ are stored under `data`, and generated visualizations are stored in `figures`.
 Previous versions of the visualizations are retained in `figures/archive`.
 
 To run the program from the root directory of the repository enter the command: 
-python main.py
+uv run main.py
 
 When the program starts, the user is prompted to choose whether to start a
 new simulation, add additional simulated decks to the existing data, or use
@@ -82,7 +82,7 @@ select the pattern that best counters the first player's choice.
 The simulations show that the optimal counter depends not only on the
 opponent's selection, but in some cases also on the scoring method. 
 
-Forexample, when the opponent selects RRR, RRB provides the highest win
+For example, when the opponent selects RRR, RRB provides the highest win
 percentage under Classic scoring, while BBB provides the highest win
 percentage under Ron's scoring. A similar difference occurs when the
 opponent selects BBB.

@@ -49,22 +49,26 @@ class DeckGenerator:
         # i am going to determine how many simulations are saved per file
         MAX_SIMS = 1000000
 
-        quot, div = divmod(self.current_decks.shape[0], MAX_SIMS)
+        whole, decimal = divmod(self.current_decks.shape[0], MAX_SIMS)
+        print(whole, decimal)
 
-        for part in range(quot):
+        #put this here so that no errors are triggered
+        part = 0
+        for part in range(whole):
+
             filename = (
                 self.PATH_DECKS
                 / f"decks_{num_decks}x{num_cards}_part{part}_seed_{self.current_seed}"
             )
-            np.save(filename, self.current_decks)
+            np.save(filename, self.current_decks[part*MAX_SIMS: part*MAX_SIMS+MAX_SIMS])
 
-        if div != 0:
-            print(div)
+        if decimal != 0:
+            print(decimal)
             filename = (
                 self.PATH_DECKS
-                / f"decks_{num_decks}x{num_cards}_part{part+1}_seed_{self.current_seed}"
+                / f"decks_{num_decks}x{num_cards}_part_{part+1}_seed_{self.current_seed}"
             )
-            np.save(filename, self.current_decks)
+            np.save(filename, self.current_decks[part*MAX_SIMS: part*MAX_SIMS+decimal])
 
         print()
         self.seed_logger.save_seed_info()

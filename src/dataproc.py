@@ -70,7 +70,7 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
 
 
 def calculate_probabilities(score: int, total_simulations: int) -> int:
-    return round((score / total_simulations) * 100, 1)
+    return round((score / total_simulations) * 100, None)
 
 
 def update_scores(results_dict: dict, combo: list, player_overall:list, total_simulations: int, ron_ties: int, classic_ties: int) -> dict:
@@ -126,6 +126,7 @@ def simulate_game(
     data_paths, _ = read_raw_data(PATH_DATA_RAW_DECKS)
     data = concat_raw_data(data_paths)
     total_simulations = data.shape[0]
+    print(total_simulations)
 
     # save total simulations to file
     np.save(PATH_DATA_CLEAN / 'total_sims.npy', total_simulations)

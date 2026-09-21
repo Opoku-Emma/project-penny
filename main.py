@@ -6,7 +6,7 @@ from datetime import datetime as dt
 def main():
 
     # Number of new shuffled decks to generate.
-    additional_simulation = 10_000_000
+    additional_simulation = 1_000_000
 
     print("Hello from project-penny!\n")
 

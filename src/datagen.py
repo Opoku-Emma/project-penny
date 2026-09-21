@@ -1,7 +1,7 @@
 import numpy as np
 
-import src.generate_seed as g_seed
 from src.paths import PATH_DATA_RAW_DECKS
+import src.generate_seed as g_seed
 
 
 class DeckGenerator:
@@ -16,16 +16,21 @@ class DeckGenerator:
         # an error will pop up to first make a deck
         self.previous_seed = self.current_seed
 
-    def make_decks(self, num_decks: int, num_cards: int) -> np.ndarray:
-        """Generate a deck of cards with size (num_decks, num_cards)"""
+    def make_decks(self, num_sims: int, num_cards: int) -> np.ndarray:
+        """Generate a deck of cards with size (num_decks, num_cards).
+        Args:
+            num_sims (int): number of simulations (or decks)
+            num_cards (int): number of cards per deck
+        Returns:
+            np.ndarray: (num_sims x num_cards) shaped array"""
 
         # set seed
         self.current_seed = self.seed_logger.get_next_seed()
         rng = np.random.default_rng(self.current_seed)
 
         tmp_deck = [1] * (num_cards // 2) + [0] * (num_cards // 2)
-        tmp_deck = tmp_deck * num_decks
-        tmp_deck = np.array(tmp_deck).reshape((num_decks, num_cards))
+        tmp_deck = tmp_deck * num_sims
+        tmp_deck = np.array(tmp_deck).reshape((num_sims, num_cards))
 
         self.current_decks = rng.permuted(tmp_deck, axis=1)
 
@@ -41,9 +46,26 @@ class DeckGenerator:
         num_decks = self.current_decks.shape[0]
         num_cards = self.current_decks.shape[1]
 
-        filename = (
-            self.PATH_DECKS / f"decks_{num_decks}x{num_cards}_seed_{self.current_seed}"
-        )
-        np.save(filename, self.current_decks)
+        # i am going to determine how many simulations are saved per file
+        MAX_SIMS = 1000000
+
+        quot, div = divmod(self.current_decks.shape[0], MAX_SIMS)
+
+        for part in range(quot):
+            filename = (
+                self.PATH_DECKS
+                / f"decks_{num_decks}x{num_cards}_part{part}_seed_{self.current_seed}"
+            )
+            np.save(filename, self.current_decks)
+
+        if div != 0:
+            print(div)
+            filename = (
+                self.PATH_DECKS
+                / f"decks_{num_decks}x{num_cards}_part{part+1}_seed_{self.current_seed}"
+            )
+            np.save(filename, self.current_decks)
+
         print()
         self.seed_logger.save_seed_info()
+        return

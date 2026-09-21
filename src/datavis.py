@@ -22,18 +22,20 @@ def datavis() -> None:
     Read .npy files for color patterns and number of simulations
     Save new heatmaps in figures folder, and archive any previous versions
     '''
-    print()
-    print(f"Using {paths.PATH_DATA_CLEAN} as folder for input .npy files")
-    print(f"Using {paths.PATH_FIGURES} as folder for images")
-    print(f"Using {paths.PATH_FIGURES_ARCHIVE} as folder for archived images")
+    #print()
+    #print(f"Using {paths.PATH_DATA_CLEAN} as folder for input .npy files")
+    #print(f"Using {paths.PATH_FIGURES} as folder for images")
+    #print(f"Using {paths.PATH_FIGURES_ARCHIVE} as folder for archived images")
 
     # Need this for row and column labels
     color_patterns = np.load(paths.PATH_DATA_CLEAN / "possible_pairs.npy")
-    print(f"Using color patterns {color_patterns}")
+    #print(f"Using color patterns {color_patterns}")
 
     total_sims = np.load(paths.PATH_DATA_CLEAN / "total_sims.npy")
-    print(f"Using total simulations {total_sims}")
-    N = total_sims
+    N = '{:,}'.format(total_sims)
+    print()
+    print(f"Generating chart for {N} total simulations ")
+
 
     # Read in "Classic" Wins
     classic_wins_df = pd.DataFrame(

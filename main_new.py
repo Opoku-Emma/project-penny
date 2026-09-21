@@ -1,20 +1,3 @@
-#
-# Potential Issues:
-#
-# Too much logic in main function?
-#
-# Doesn't match suggested structure of:
-# - datagen
-# - dataproc
-# - datavis
-# 
-# Option "1 - Start a new simulation" doesn't work
-# because simulate_game always picks up 
-# existing data.
-# 
-# Need to limit the number of simulations
-# to prevent large file sizes?
-
 
 from src.dataproc import make_player_pairs, simulate_game
 import src.datavis as datavis
@@ -27,10 +10,11 @@ def get_simulation_count(prompt: str) -> int:
         try:
             number = int(input(prompt))
 
-            if number > 0:
+            if number > 0 and number < 1000001:
                 return number
+            print(f"{number} isn't valid for this")
+            print("Please enter a number greater than 0 and less than 1,000,001")
 
-            print("Please enter a number greater than 0.")
 
         except ValueError:
             print("Please enter a whole number.")
@@ -41,35 +25,14 @@ def main() -> None:
 
     print("\nPenny's Game Simulation")
     print("-----------------------")
-    print("1 - Start a new simulation")
-    print("2 - Add simulations to existing data")
-    print("3 - Generate charts from existing data")
-    print("4 - Exit")
+    print("1 - Add simulations to existing data")
+    print("2 - Generate charts from existing data")
+    print("3 - Exit")
 
     choice = input("\nEnter your choice: ").strip()
 
-    # Start a completely new simulation
-    if choice == "1":
-
-        number_simulations = get_simulation_count(
-            "How many simulations would you like to run? "
-        )
-
-        print(
-            f"\nStarting a new simulation with "
-            f"{number_simulations:,} decks..."
-        )
-
-        possible_combinations, card_combination = make_player_pairs(3)
-
-        simulate_game(
-            possible_combinations,
-            card_combination,
-            number_simulations
-        )
-
     # Add simulations to the existing results
-    if choice == "2":
+    if choice == "1":
 
         additional_simulations = get_simulation_count(
             "How many additional simulations would you like to run? "
@@ -82,35 +45,43 @@ def main() -> None:
 
         possible_combinations, card_combination = make_player_pairs(3)
 
+        # Record the time immediately before starting the simulation.
+        start_time = dt.now()
+        print(f"Start time: {start_time:%Y-%m-%d %H:%M:%S}\n")
+
         simulate_game(
             possible_combinations,
             card_combination,
             additional_simulations
         )
 
+        # Stop the simulation timer before generating/displaying figures.
+        end_time = dt.now()
+        elapsed_time = end_time - start_time
+
+        print("\nSimulation completed")
+        print(f"End time:     {end_time:%Y-%m-%d %H:%M:%S}")
+        print(f"Runtime:      {elapsed_time}")
+
     # Generate charts only
-    if choice == "3":
+    if choice == "2":
 
         print("\nUsing existing simulation data.")
 
     # Exit
-    if choice == "4":
-
+    if choice == "3":
         print("\nExiting.")
         return
 
     # Check for invalid input
-    if choice not in ["1", "2", "3", "4"]:
-
+    if choice not in ["1", "2", "3"]:
         print("\nInvalid selection.")
         return
 
-    # Generate charts for choices 1, 2, or 3
-    print("\nGenerating charts...")
-
+    # Generate charts for choices 1, or 2
     datavis.datavis()
 
-    print("Done.")
+    print("Done, thank you.")
 
 
 if __name__ == "__main__":

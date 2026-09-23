@@ -70,6 +70,15 @@ def make_player_pairs(num_cards_per_player: int = 3) -> tuple:
 
 
 def calculate_probabilities(score: int, total_simulations: int) -> int:
+    """Calculate probability of win (or tie) based on score
+
+    Args:
+        score (int): final outcome after simulating a player-vs-player game
+        total_simulations (int): total number of simulations per player-vs-player
+
+    Returns:
+        int: probability of win (or tie) as an integer value
+    """
     return round((score / total_simulations) * 100, None)
 
 
@@ -222,6 +231,8 @@ def play_game(
 
             prev += 1
 
+        # after the simulation check if there are ties
+        # update overall scores for each player where needed
         if player1_tmp_result[0] == player2_tmp_result[0]:
             h_n_ties += 1
         elif player1_tmp_result[0] > player2_tmp_result[0]:

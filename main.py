@@ -80,12 +80,7 @@ def main() -> None:
     # Generate charts for choices 1, or 2
     datavis.datavis()
 
-<<<<<<< HEAD
-    print("Done")
-
-=======
     print("Done, thank you.")
->>>>>>> master
 
 
 if __name__ == "__main__":

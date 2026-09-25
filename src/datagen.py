@@ -47,7 +47,7 @@ class DeckGenerator:
         num_cards = self.current_decks.shape[1]
 
         # i am going to determine how many simulations are saved per file
-        MAX_SIMS = 1000000
+        MAX_SIMS = 100_000
 
         whole, decimal = divmod(self.current_decks.shape[0], MAX_SIMS)
         print(whole, decimal)

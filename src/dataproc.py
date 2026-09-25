@@ -150,7 +150,7 @@ def simulate_game(
     for combo in pbar:
         pbar.set_description(f"Playing {combo[0]} against {combo[1]}")
         player1_overall, player2_overall, h_n_ties, ron_ties = play_game(
-            converted_data, combo[0], combo[1]
+            converted_data, combo[1], combo[0]
         )
 
         # update player a's results

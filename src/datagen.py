@@ -37,39 +37,19 @@ class DeckGenerator:
         return self.current_decks
 
     def save_deck(self) -> None:
-        """Store simulated deck as numpy arrays for later retrieval"""
-        if self.current_seed == self.previous_seed and (self.previous_seed != 0):
-            # print("Generate decks before saving!")
+        """Store simulated decks as numpy arrays, split into chunks of MAX_SIMS."""
+        if self.current_seed == self.previous_seed and self.previous_seed != 0:
             raise RuntimeError("Generate decks before saving!")
 
         self.PATH_DECKS.mkdir(parents=True, exist_ok=True)
-        num_decks = self.current_decks.shape[0]
-        num_cards = self.current_decks.shape[1]
-
-        # i am going to determine how many simulations are saved per file
+        num_decks, num_cards = self.current_decks.shape[:2]
         MAX_SIMS = 100_000
 
-        whole, decimal = divmod(self.current_decks.shape[0], MAX_SIMS)
-        print(whole, decimal)
-
-        #put this here so that no errors are triggered
-        part = 0
-        for part in range(whole):
-
+        for part, start in enumerate(range(0, num_decks, MAX_SIMS)):
             filename = (
                 self.PATH_DECKS
-                / f"decks_{num_decks}x{num_cards}_part{part}_seed_{self.current_seed}"
+                / f"decks_{num_decks}x{num_cards}_part_{part:02d}_seed_{self.current_seed}.npy"
             )
-            np.save(filename, self.current_decks[part*MAX_SIMS: part*MAX_SIMS+MAX_SIMS])
+            np.save(filename, self.current_decks[start : start + MAX_SIMS])
 
-        if decimal != 0:
-            print(decimal)
-            filename = (
-                self.PATH_DECKS
-                / f"decks_{num_decks}x{num_cards}_part_{part+1}_seed_{self.current_seed}"
-            )
-            np.save(filename, self.current_decks[part*MAX_SIMS: part*MAX_SIMS+decimal])
-
-        print()
         self.seed_logger.save_seed_info()
-        return

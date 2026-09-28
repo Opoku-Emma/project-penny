@@ -82,12 +82,17 @@ select the pattern that best counters the first player's choice.
 The simulations show that the optimal counter depends not only on the
 opponent's selection, but in some cases also on the scoring method. 
 
-For example, when the opponent selects RRR, RRB provides the highest win
-percentage under Classic scoring, while BBB provides the highest win
-percentage under Ron's scoring. A similar difference occurs when the
-opponent selects BBB.
+Classic strategy:
+- Opponent selects RRR → RRB
+- Opponent selects any other Rxx → BBB
+- Opponent selects BBB → BBR
+- Opponent selects any other Bxx → RRR
 
-Therefore, while both versions favor selecting a pattern in response to the
-opponent's choice, the optimal response is not always consistent between the
+Ron's Strategy:
+- Opponent selection begins with R → choose BBB.
+- Opponent selection begins with B → choose RRR.
+
+Both versions of the game favor selecting a pattern in response to the
+opponent's choice, but the optimal response is not always consistent between the
 two scoring methods.
 

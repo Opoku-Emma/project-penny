@@ -82,7 +82,7 @@ select the pattern that best counters the first player's choice.
 The simulations show that the optimal counter depends not only on the
 opponent's selection, but in some cases also on the scoring method. 
 
-Classic strategy:
+Classic Strategy:
 - Opponent selects RRR → RRB
 - Opponent selects any other Rxx → BBB
 - Opponent selects BBB → BBR

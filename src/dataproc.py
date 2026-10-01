@@ -182,6 +182,7 @@ def play_game(
             classic_ties, ron_ties
     """
 
+    # TODO: there's nothing wrong here though
     player1 = "".join(convert_chr_to_nums(player1))
     player2 = "".join(convert_chr_to_nums(player2))
 
